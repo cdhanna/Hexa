@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hexa.Systems.Cameras;
 using Hexa.Systems.Sprites;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -22,13 +23,15 @@ public class MapSystem
     public float horizDist => .75f * hexWidth;
     public float vertDist => hexHeight;
 
-    public Vector2 worldCenter = new Vector2(-300, -200);
+    public Vector2 worldCenter = new Vector2(0,0);
     
     public List<HexCubeCoord> coords = new List<HexCubeCoord>();
-    
+    private CameraSystem _camSystem;
 
-    public void Init(ContentManager content)
+
+    public void Init(ContentManager content, CameraSystem camSystem)
     {
+        _camSystem = camSystem;
         _tileTexture = content.Load<Texture2D>("tiles/Flat/Terrain 1 - Flat - Black Outline 2px - 128x128");
         _sprites = SpriteFunctions.Splice(_tileTexture, 3, 4);
         
@@ -81,7 +84,7 @@ public class MapSystem
 
     public void Draw(SpriteBatch sb)
     {
-        sb.Begin();
+        sb.Begin(transformMatrix: _camSystem.cameraMatrix);
 
         foreach (var coord in coords)
         {

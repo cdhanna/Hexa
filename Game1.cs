@@ -1,4 +1,6 @@
-﻿using Hexa.Systems.MapTech;
+﻿using Hexa.Systems.Cameras;
+using Hexa.Systems.InputUtil;
+using Hexa.Systems.MapTech;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,7 +12,10 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
+    public CameraSystem camSystem = new CameraSystem();
     public MapSystem mapSystem = new MapSystem();
+    private InputSystem inputSystem = new InputSystem();
+    
     
     public Game1()
     {
@@ -30,8 +35,8 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-
-        mapSystem.Init(Content);
+        camSystem.Init(GraphicsDevice, inputSystem);
+        mapSystem.Init(Content, camSystem);
     }
 
     protected override void Update(GameTime gameTime)
@@ -40,6 +45,10 @@ public class Game1 : Game
             Exit();
 
         // TODO: Add your update logic here
+        
+        
+        inputSystem.Update();
+        camSystem.Update(gameTime);
 
         base.Update(gameTime);
     }
