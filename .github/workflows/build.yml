@@ -26,7 +26,7 @@ jobs:
       - run: dotnet publish -c Release -r osx-x64 /p:PublishReadyToRun=false /p:TieredCompilation=false --self-contained
       - uses: actions/upload-artifact@v3
         with:
-          name: windows build
+          name: mac build
           path: bin/Release/net6.0/win-x64/publish/
           retention-days: 5
 
