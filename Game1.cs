@@ -12,10 +12,11 @@ public class Game1 : Game
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    public CameraSystem camSystem = new CameraSystem();
-    public MapSystem mapSystem = new MapSystem();
-    private InputSystem inputSystem = new InputSystem();
-    
+    public static CameraSystem camSystem = new CameraSystem();
+    public static MapSystem mapSystem = new MapSystem();
+    public static InputSystem inputSystem = new InputSystem();
+
+    public static Texture2D pixel;
     
     public Game1()
     {
@@ -34,9 +35,12 @@ public class Game1 : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        pixel = new Texture2D(GraphicsDevice, 1, 1);
+        pixel.SetData(new Color[]{Color.White});
 
         camSystem.Init(GraphicsDevice, inputSystem);
         mapSystem.Init(Content, camSystem);
+
     }
 
     protected override void Update(GameTime gameTime)

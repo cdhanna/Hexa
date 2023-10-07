@@ -15,13 +15,14 @@ public class MapSystem
     private Texture2D _tileTexture;
     private List<Sprite> _sprites;
 
-    public int hexWidth = 100;
-    public int hexHeight = 100;
+    public int size = 100;
+    // public int hexWidth = 100;
+    // public int hexHeight = 100;
 
     // private readonly float ROOT_3 = MathF.Sqrt(3);
     
-    public float horizDist => .75f * hexWidth;
-    public float vertDist => hexHeight;
+    public float horizDist => 1.5f * size;
+    public float vertDist => (float)Math.Sqrt(3) * size;
 
     public Vector2 worldCenter = new Vector2(0,0);
     
@@ -49,36 +50,30 @@ public class MapSystem
         for (var y = -10; y < 10; y++)
         {
             {
-                var coord = HexCubeCoord.FromPixel(x * hexWidth, y * hexHeight, hexWidth);
+                var coord = HexCubeCoord.FromPixel((int)(x * horizDist), (int)(y * vertDist), size);
                 coords.Add(coord);
             }
         }
 
-
-        var q = coords.Select(x => x.ToOddQ()).ToList();
-        foreach (var n in q)
-        {
-            Console.WriteLine($"{n.col}, {n.row}");
-        }
-
-    }
-
-    public Vector2 ToWorldSpace(HexCubeCoord coord)
-    {
-        var oddr = coord.ToOddQ();
-
-        var pos = new Vector2(
-            oddr.col * horizDist,
-            oddr.row * vertDist);
-
-        if ((oddr.col % 2) == 0)
-        {
-            pos -= Vector2.UnitY * hexHeight * .5f;
-        }
+        // for (var q = -3; q < 3; q ++)
+        // {
+        //     for (var r = -3; r < 3; r++)
+        //     {
+        //         var coord = new HexCubeCoord(q, r);
+        //         coords.Add(coord);
+        //     }
+        // }
         
-        pos -= worldCenter;
+        // coords.Add(new HexCubeCoord(0,0,0));
+        // coords.Add(new HexCubeCoord(2, -1));
+        
 
-        return pos;
+        // var q = coords.Select(x => x.ToOddQ()).ToList();
+        // foreach (var n in q)
+        // {
+        //     Console.WriteLine($"{n.col}, {n.row}");
+        // }
+
     }
     
 
@@ -86,17 +81,48 @@ public class MapSystem
     {
         sb.Begin(transformMatrix: _camSystem.cameraMatrix);
 
+        
+        var mousePos = Game1.camSystem.ScreenPointToWorld(Game1.inputSystem.MousePosition);
+
+        var mouseCoord = HexCubeCoord.FromPixel((int)mousePos.X, (int)mousePos.Y, size);
+        // Console.WriteLine(mouseCoord.q + "," + mouseCoord.r);
+
+        var x = new Sprite()
+        {
+            color = Color.Red,
+            origin = Vector2.One * .5f, size = new Vector2(1, 1), src = new Rectangle(0, 0, 1, 1),
+            texture = Game1.pixel
+        };
         foreach (var coord in coords)
         {
-            var pos = ToWorldSpace(coord);
+            // var pos = ToWorldSpace(coord);
+            var pos = HexCubeCoord.ToPixel(coord, size);
 
             var dist = HexCubeCoord.Distance(coord, HexCubeCoord.Zero);
             var index = (dist%2) == 0 ? 5 : 3;
+
+            _sprites[index].color = Color.Gray;
+            if (mouseCoord == coord)
+            {
+                _sprites[index].color = Color.White;
+            }
+
+            
+            sb.DrawSprite(_sprites[index], pos, 1*new Vector2( horizDist / .75f,  vertDist));
+
+            x.color = Color.Red;
+            sb.DrawSprite(x, pos, new Vector2(5, 5));
             
             
-            sb.DrawSprite(_sprites[index], pos, new Vector2(hexWidth, hexHeight));
+            // x.color = Color.GreenYellow;
+            // sb.DrawSprite(x, pixelLoc + Vector2.UnitY * 5, new Vector2(5, 5));
 
         }
+        
+        
+       
+        sb.DrawSprite(x, mousePos, new Vector2(30, 30));
+
         // sb.DrawSprite(_sprites[1], new Vector2(0, 0));
         
         sb.End();

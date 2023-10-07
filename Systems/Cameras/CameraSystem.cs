@@ -1,4 +1,5 @@
-﻿using Hexa.Systems.InputUtil;
+﻿using System;
+using Hexa.Systems.InputUtil;
 using Hexa.Systems.Transforms;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,33 @@ public class CameraSystem
         _inputSystem = inputSystem;
         _device = device;
     }
+
+    public Vector2 ScreenPointToWorld(Vector2 position)
+    {
+
+        var inverted = Matrix.Invert(cameraMatrix);
+        var outcome = Vector2.Transform(position, inverted);
+
+
+        return outcome;
+        // // var cameraMatrix = Matrix.Identity;
+        // // cameraMatrix *= Matrix.CreateScale(target.scale.X, target.scale.Y, 1);
+        // //
+        // // cameraMatrix *= Matrix.CreateTranslation(target.position.X, target.position.Y, 0);
+        //
+        // var size = new Vector2(_device.Viewport.Width, _device.Viewport.Height);
+        //
+        // position += size * .5f;
+        // // position -= size * .5f;
+        // var sizeMatrix = Matrix.CreateTranslation(-_device.Viewport.Width * .5f, -_device.Viewport.Height * .5f, 0);
+        // //
+        // // Console.WriteLine(position.X);
+        // // // cameraMatrix *= sizeMatrix;
+        // var inverted = Matrix.Invert(cameraMatrix);
+        // // inverted *= sizeMatrix;
+        // return Vector2.Transform(position, inverted);
+    }
+    
     
     public void Update(GameTime gameTime)
     {
